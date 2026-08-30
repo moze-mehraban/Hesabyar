@@ -1,0 +1,999 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>حساب‌یار</title>
+<style>
+:root{--ink:#182230;--muted:#708096;--line:#e8edf3;--brand:#5b5ce2;--green:#11a683;--red:#e05252;--bg:#f6f8fc}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif}.shell{display:flex;min-height:100vh}.side{width:230px;background:#171b34;color:#dce2ff;padding:25px 16px;position:sticky;top:0;height:100vh}.logo{display:flex;gap:10px;align-items:center;font-size:20px;font-weight:bold;margin:0 10px 40px}.logo-mark{width:36px;height:36px;border-radius:12px;background:#6869ec;display:grid;place-items:center}.nav{display:grid;gap:7px}.nav button{width:100%;text-align:right;padding:12px;border:0;border-radius:9px;color:#aab3da;background:transparent;font:inherit;cursor:pointer}.nav button.active{background:#2b2f53;color:#fff}.note{position:absolute;bottom:20px;right:16px;left:16px;padding:12px;border:1px solid #34395e;border-radius:10px;font-size:11px;line-height:1.8;color:#aab3da}.main{flex:1;padding:28px 4vw;max-width:1500px}.page{display:none}.page.active{display:block}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.title h1{margin:0 0 7px;font-size:26px}.muted{color:var(--muted);font-size:12px}.cards,.extra{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.extra{grid-template-columns:repeat(3,1fr);margin-top:15px}.card,.panel{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:0 7px 22px #252b5809}.card{padding:18px}.card .label{color:var(--muted);font-size:12px}.card b{display:block;font-size:21px;margin-top:10px}.hint{font-size:11px;color:var(--green);margin-top:7px}.panel{padding:20px;margin-top:16px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.panel h2{font-size:16px;margin:0}form{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.field{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select{width:100%;border:1px solid #dbe2ec;border-radius:8px;padding:10px;background:#fbfcfe;font:inherit;color:var(--ink)}button{border:0;border-radius:8px;padding:10px 14px;background:var(--brand);color:#fff;font:inherit;cursor:pointer}button.light{background:#eff0ff;color:#4d4ec7}button.green{background:var(--green)}button.danger{background:#fff0f0;color:var(--red);padding:7px 9px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:820px}th,td{text-align:right;padding:12px 9px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--muted);font-size:11px;font-weight:normal}td{font-size:12px}.product{display:flex;align-items:center;gap:8px}.avatar{width:31px;height:31px;border-radius:9px;background:#eef0ff;color:var(--brand);display:grid;place-items:center;font-weight:bold}.positive{color:var(--green)}.negative{color:var(--red)}.qrcode{width:54px;height:54px;vertical-align:middle}.qr-cell{display:flex;align-items:center;gap:6px}.search{margin-bottom:14px;max-width:380px}.invoice-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:20px}.scan-box{display:grid;grid-template-columns:2fr 1fr auto;gap:10px;align-items:end;margin-bottom:17px}.summary{border-top:1px solid var(--line);margin-top:15px;padding-top:12px;display:grid;gap:8px}.summary div{display:flex;justify-content:space-between}.summary .final{font-weight:bold;font-size:16px;border-top:2px solid #222;padding-top:10px}.modal{display:none;position:fixed;inset:0;background:#10152b88;z-index:5;place-items:center;padding:20px}.modal.open{display:grid}.modal-card{background:#fff;border-radius:16px;padding:22px;width:min(650px,100%)}.toast{position:fixed;bottom:20px;left:20px;background:#20263b;color:#fff;padding:12px 16px;border-radius:9px;opacity:0}.toast.show{opacity:1}.settings{max-width:700px;display:grid;gap:14px}@media(max-width:900px){.side{width:70px}.logo span,.nav span,.note{display:none}.cards{grid-template-columns:repeat(2,1fr)}.extra,.invoice-grid,.scan-box{grid-template-columns:1fr}}@media(max-width:600px){.side{display:none}.main{padding:18px 12px}.top{align-items:flex-start;flex-direction:column}.cards,.extra,form{grid-template-columns:1fr}}
+</style>
+<style>
+/* Visual polish layer: layout and appearance only. */
+:root {
+  --ink: #172033;
+  --muted: #718096;
+  --line: #e6eaf2;
+  --brand: #5b5ce2;
+  --brand-dark: #4647c5;
+  --green: #11a683;
+  --green-dark: #0b876a;
+  --red: #df5b62;
+  --bg: #f4f6fb;
+  --white: #ffffff;
+  --shadow: 0 12px 30px rgba(30, 42, 74, .07);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--bg);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(91, 92, 226, .08), transparent 28rem),
+    var(--bg);
+  font-family: Tahoma, "Segoe UI", Arial, sans-serif;
+  line-height: 1.7;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 11px;
+  padding: 9px 16px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), #7475ef);
+  box-shadow: 0 6px 14px rgba(91, 92, 226, .18);
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+
+button:hover {
+  filter: brightness(.98);
+  transform: translateY(-1px);
+  box-shadow: 0 9px 18px rgba(91, 92, 226, .24);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.light {
+  color: #fff;
+  background: linear-gradient(135deg, #536dfe, #7986cb);
+  box-shadow: 0 6px 14px rgba(83, 109, 254, .18);
+}
+
+button.green {
+  background: linear-gradient(135deg, var(--green), #2fc29d);
+  box-shadow: 0 6px 14px rgba(17, 166, 131, .18);
+}
+
+button.danger {
+  color: #b83d48;
+  background: #fff0f1;
+  box-shadow: none;
+}
+
+.shell {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.side {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  width: 268px;
+  min-width: 268px;
+  min-height: 100vh;
+  padding: 26px 18px;
+  background: linear-gradient(180deg, #202844 0%, #171e35 100%);
+  box-shadow: 8px 0 28px rgba(19, 28, 57, .12);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 48px;
+  margin: 0 8px 28px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.logo-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #7778f2, #4e50cc);
+  box-shadow: 0 8px 18px rgba(91, 92, 226, .3);
+}
+
+.nav {
+  display: grid;
+  gap: 8px;
+}
+
+.nav button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid transparent;
+  padding: 10px 13px;
+  color: #b9c2da;
+  background: transparent;
+  box-shadow: none;
+  text-align: right;
+}
+
+.nav button:hover,
+.nav button.active {
+  color: #fff;
+  background: rgba(255, 255, 255, .11);
+  border-color: rgba(255, 255, 255, .1);
+  box-shadow: none;
+  transform: none;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  width: calc(100% - 268px);
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 30px clamp(18px, 4vw, 56px) 54px;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 92px;
+  margin-bottom: 24px;
+  padding: 18px 24px;
+  border: 1px solid rgba(230, 234, 242, .9);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .9);
+  box-shadow: var(--shadow);
+}
+
+.title h1 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(22px, 2.3vw, 31px);
+  font-weight: 850;
+  letter-spacing: -.5px;
+}
+
+.title .muted,
+.muted {
+  color: var(--muted);
+}
+
+.page {
+  animation: page-in .22s ease both;
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cards,
+.extra {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.extra {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.card {
+  min-width: 0;
+  min-height: 124px;
+  padding: 21px 22px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.card .label {
+  margin-bottom: 8px;
+  color: #78869b;
+  font-size: 13px;
+}
+
+.card b {
+  display: block;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: clamp(20px, 2vw, 28px);
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card .hint {
+  margin-top: 3px;
+  color: #9aa5b7;
+  font-size: 12px;
+}
+
+.panel {
+  min-width: 0;
+  margin-bottom: 20px;
+  padding: clamp(20px, 3vw, 30px);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.panel h2 {
+  margin: 0 0 5px;
+  color: var(--ink);
+  font-size: 20px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid var(--line);
+}
+
+form,
+.invoice-grid {
+  display: grid;
+  gap: 18px;
+}
+
+form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+}
+
+form > button {
+  justify-self: start;
+}
+
+.field {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: #5d6b80;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.field input,
+.field select,
+input.search {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid #dfe4ee;
+  border-radius: 11px;
+  padding: 9px 13px;
+  color: var(--ink);
+  background: #fbfcfe;
+  outline: 0;
+  transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.field input:focus,
+.field select:focus,
+input.search:focus {
+  border-color: rgba(91, 92, 226, .7);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(91, 92, 226, .1);
+}
+
+input.search {
+  display: block;
+  max-width: 480px;
+  margin: 0 0 20px;
+  padding-inline: 16px;
+}
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #fff;
+}
+
+table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+th,
+td {
+  padding: 14px 13px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+th {
+  color: #66748a;
+  background: #f7f8fc;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+td {
+  color: #344258;
+  font-size: 13px;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+tbody tr:hover td {
+  background: #fafbff;
+}
+
+td button {
+  min-height: 34px;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.product {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 180px;
+}
+
+.avatar {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  color: var(--brand);
+  background: #eef0ff;
+  font-weight: 800;
+}
+
+.positive {
+  color: var(--green);
+  font-weight: 800;
+}
+
+.negative {
+  color: var(--red);
+  font-weight: 800;
+}
+
+.qrcode,
+.qr-cell {
+  display: inline-block;
+  width: 58px;
+  height: 58px;
+  padding: 4px;
+  border: 1px solid #e1e5ed;
+  border-radius: 9px;
+  background: #fff;
+  object-fit: contain;
+}
+
+.qr-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  min-height: 42px;
+  padding: 8px 12px;
+  color: var(--brand-dark);
+  background: #f5f6ff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .4px;
+}
+
+.product-code {
+  direction: ltr;
+  white-space: nowrap;
+}
+
+.invoice-grid {
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: start;
+}
+
+.scan-box {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px auto;
+  align-items: end;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding: 17px;
+  border: 1px solid #e1e3fb;
+  border-radius: 15px;
+  background: #f7f7ff;
+}
+
+.invoice-items {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+}
+
+.summary {
+  display: grid;
+  gap: 9px;
+  margin-top: 16px;
+  padding: 15px 17px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: #fafbfe;
+}
+
+.summary > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.summary b {
+  color: var(--brand-dark);
+  font-size: 18px;
+}
+
+.settings {
+  max-width: 900px;
+}
+
+.settings > .field {
+  max-width: 620px;
+  margin-top: 20px;
+}
+
+#page-dashboard .panel {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+#page-dashboard .panel h2,
+#page-dashboard .panel p {
+  grid-column: 1 / -1;
+}
+
+#page-dashboard .panel p {
+  margin: 0 0 5px;
+}
+
+#page-dashboard .panel > button {
+  width: 100%;
+  margin: 0;
+}
+
+.product-picker {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #fbfcff;
+}
+
+.product-suggestions {
+  display: grid;
+  gap: 8px;
+  max-height: 330px;
+  overflow-y: auto;
+  margin-top: 13px;
+}
+
+.product-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 9px 12px;
+  border: 1px solid #e4e7f2;
+  color: var(--ink);
+  background: #fff;
+  box-shadow: none;
+  text-align: right;
+}
+
+.product-result:hover {
+  color: var(--brand-dark);
+  background: #f5f5ff;
+  border-color: #cfd1fb;
+  box-shadow: none;
+}
+
+.product-result span {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.product-result b,
+.product-result small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-result b {
+  font-size: 13px;
+}
+
+.product-result small,
+.product-result em {
+  color: var(--muted);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.field {
+  white-space: nowrap;
+}
+
+.field-title {
+  display: block;
+  width: 100%;
+  overflow: visible;
+  white-space: nowrap !important;
+}
+
+.field input,
+.field select {
+  white-space: normal;
+}
+
+#page-sales .invoice-grid {
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+#page-sales .invoice-main {
+  display: grid;
+  gap: 18px;
+  width: 100%;
+}
+
+#page-sales .product-picker {
+  width: 100%;
+}
+
+#page-sales .product-picker .field {
+  width: 100%;
+}
+
+#page-sales .table-wrap {
+  width: 100%;
+  box-shadow: 0 7px 18px rgba(30, 42, 74, .04);
+}
+
+#page-sales .discount-field {
+  width: min(420px, 100%);
+  margin-top: 0 !important;
+  white-space: nowrap !important;
+}
+
+#page-sales .discount-field .currency-label {
+  display: inline;
+  white-space: nowrap !important;
+}
+
+.invoice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 0;
+}
+
+.invoice-actions button {
+  min-width: 150px;
+}
+
+.table-wrap tbody tr:nth-child(even) td {
+  background: #fcfdff;
+}
+
+.table-wrap tbody tr:hover td {
+  background: #f2f4ff;
+}
+
+#invoice-paper {
+  direction: rtl;
+  padding: 30px;
+  background:
+    linear-gradient(135deg, rgba(91, 92, 226, .04), transparent 22rem),
+    #fff;
+}
+
+#invoice-paper > div:first-child {
+  padding: 4px;
+}
+
+#invoice-paper .invoice-store-name {
+  display: none;
+}
+
+#invoice-paper h1 {
+  margin: 0 0 20px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid var(--brand);
+  color: var(--brand-dark);
+  font-size: 27px;
+}
+
+#invoice-paper p {
+  display: inline-block;
+  min-width: 46%;
+  margin: 0 0 16px;
+  color: #526078;
+  font-size: 13px;
+}
+
+#invoice-paper table {
+  min-width: 100%;
+  margin-top: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#invoice-paper th,
+#invoice-paper td {
+  padding: 13px 12px;
+}
+
+#invoice-paper th {
+  color: #fff;
+  background: #343a75;
+}
+
+#invoice-paper .summary {
+  width: min(390px, 100%);
+  margin: 20px 0 0 auto;
+  background: #f8f9ff;
+}
+
+#invoice-paper .summary .final {
+  padding-top: 12px;
+  border-top: 2px solid var(--brand);
+  color: var(--brand-dark);
+}
+
+#invoice-paper > div:last-child {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px !important;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.search-hint {
+  padding: 15px 8px;
+  color: #8c98aa;
+  font-size: 12px;
+  text-align: center;
+}
+
+.currency-label,
+.summary,
+.summary *,
+td,
+th {
+  white-space: nowrap;
+}
+
+.settings {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 100%;
+  max-width: none;
+  align-items: end;
+  gap: 18px 22px;
+}
+
+.settings > div:first-child {
+  grid-column: 1 / -1;
+  padding-bottom: 5px;
+}
+
+.settings > div:nth-of-type(2) {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings > div:nth-of-type(2) button {
+  flex: 1 1 170px;
+}
+
+.settings > label:nth-of-type(3) {
+  grid-column: 1 / -1;
+}
+
+.settings > label:nth-of-type(4) {
+  grid-column: 1;
+}
+
+#page-settings .settings > label {
+  min-width: 0;
+}
+
+#page-settings .settings > label:nth-of-type(3) {
+  width: 100%;
+  max-width: none;
+  grid-column: 1 / -1;
+}
+
+#page-settings #api-url {
+  width: 100%;
+}
+
+.settings > button {
+  grid-column: 2;
+  justify-self: start;
+}
+
+.empty {
+  padding: 34px !important;
+  color: #98a3b4;
+  text-align: center;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  place-items: center;
+  padding: 20px;
+  background: rgba(18, 26, 48, .48);
+  backdrop-filter: blur(4px);
+}
+
+.modal.open {
+  display: grid;
+}
+
+.modal-card {
+  width: min(760px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 25px;
+  border-radius: 19px;
+  background: #fff;
+  box-shadow: 0 24px 60px rgba(18, 26, 48, .25);
+}
+
+.toast {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 30;
+  max-width: min(380px, calc(100vw - 44px));
+  padding: 13px 17px;
+  border-radius: 12px;
+  color: #fff;
+  background: #222c45;
+  box-shadow: 0 12px 30px rgba(18, 26, 48, .2);
+}
+
+@media (max-width: 1100px) {
+  .side {
+    width: 228px;
+    min-width: 228px;
+  }
+
+  .main {
+    width: calc(100% - 228px);
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .invoice-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .shell {
+    display: block;
+  }
+
+  .side {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    min-height: auto;
+    padding: 12px 14px;
+  }
+
+  .logo {
+    margin: 0 4px 10px;
+  }
+
+  .nav {
+    display: flex;
+    gap: 7px;
+    overflow-x: auto;
+    padding-bottom: 3px;
+  }
+
+  .nav button {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 40px;
+    padding: 7px 12px;
+  }
+
+  .main {
+    width: 100%;
+    padding: 16px 12px 34px;
+  }
+
+  .top {
+    align-items: flex-start;
+    min-height: auto;
+    margin-bottom: 16px;
+    padding: 16px;
+  }
+
+  .cards,
+  .extra {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .card {
+    min-height: 100px;
+  }
+
+  .panel {
+    padding: 17px 14px;
+    border-radius: 16px;
+  }
+
+  .panel-head {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .panel-head button {
+    width: 100%;
+  }
+
+  #page-dashboard .panel {
+    grid-template-columns: 1fr;
+  }
+
+  #page-dashboard .panel > button {
+    width: 100%;
+  }
+
+  form {
+    grid-template-columns: 1fr;
+  }
+
+  form > button {
+    width: 100%;
+  }
+
+  .scan-box {
+    grid-template-columns: 1fr;
+  }
+
+  .scan-box button {
+    width: 100%;
+  }
+
+  #page-sales .discount-field,
+  .invoice-actions button {
+    width: 100%;
+  }
+
+  #invoice-paper {
+    padding: 18px 14px;
+  }
+
+  #invoice-paper p {
+    display: block;
+    min-width: 0;
+  }
+
+  #invoice-paper > div:last-child {
+    flex-direction: column;
+  }
+
+  .settings {
+    grid-template-columns: 1fr;
+  }
+
+  .settings > div:first-child {
+    grid-column: auto;
+  }
+
+  .settings > label:nth-of-type(3),
+  .settings > label:nth-of-type(4),
+  .settings > button {
+    grid-column: auto;
+  }
+
+  .settings > button {
+    width: 100%;
+  }
+
+  .table-wrap {
+    margin-inline: -2px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="shell"><aside class="side"><div class="logo"><div class="logo-mark">✓</div><span>حساب‌یار</span></div><nav class="nav"><button data-page="dashboard">▦ <span>نمای کلی</span></button><button data-page="inventory">▣ <span>انبار</span></button><button data-page="product-form">＋ <span>افزودن / ویرایش کالا</span></button><button data-page="sales">↕ <span>فاکتور جدید</span></button><button data-page="invoices">▤ <span>سوابق فاکتورها</span></button><button data-page="settings">⚙ <span>تنظیمات</span></button></nav></aside>
+<main class="main"><header class="top"><div class="title"><h1 id="page-title">نمای کلی</h1><div class="muted">مدیریت موجودی، قیمت و فاکتور</div></div></header>
+<section class="page" id="page-dashboard"><div class="cards"><div class="card"><div class="label">تعداد کالاها</div><b id="product-count">۰</b><div class="hint">کالای ثبت‌شده</div></div><div class="card"><div class="label">ارزش خرید انبار</div><b id="purchase-total">۰</b><div class="hint">کل موجودی</div></div><div class="card"><div class="label">ارزش فعلی انبار</div><b id="market-total">۰</b><div class="hint">با نرخ دلار</div></div><div class="card"><div class="label">هشدار موجودی</div><b id="low-stock">۰</b><div class="hint">نیازمند بررسی</div></div></div><div class="extra"><div class="card"><div class="label">دریافتی ۷ روز اخیر</div><b id="weekly-sales">۰</b></div><div class="card"><div class="label">سود خالص ۷ روز اخیر</div><b id="weekly-profit">۰</b></div><div class="card"><div class="label">فاکتورهای ۷ روز اخیر</div><b id="weekly-invoices">۰</b></div></div><div class="panel"><h2>دسترسی سریع</h2><p class="muted">بخش موردنظر را انتخاب کنید.</p><button onclick="go('product-form')">ثبت کالا</button><button class="green" onclick="go('sales')">فاکتور جدید</button><button class="light" onclick="go('inventory')">مشاهده انبار</button></div></section>
+<section class="page" id="page-inventory"><div class="panel"><div class="panel-head"><div><h2>انبار</h2><div class="muted">قیمت و سود هر عدد، جدا از ارزش کل موجودی.</div></div><button onclick="go('product-form')">＋ افزودن کالا</button></div><input class="search" id="inventory-search" placeholder="جست‌وجوی کالا بر اساس نام یا کد"><div class="table-wrap"><table><thead><tr><th>کالا</th><th>کد کالا</th><th>موجودی</th><th>خرید هر عدد</th><th>قیمت فعلی هر عدد</th><th>سود هر عدد</th><th>ارزش کل</th><th>عملیات</th></tr></thead><tbody id="products"></tbody></table></div></div></section>
+<section class="page" id="page-product-form"><div class="panel"><div class="panel-head"><div><h2 id="product-title">افزودن کالا</h2><div class="muted">کد و QR به‌صورت خودکار تولید می‌شود.</div></div><button class="light" onclick="resetProductForm()">پاک‌کردن فرم</button></div><form id="product-form"><input type="hidden" name="id"><label class="field">نام کالا<input name="name" required></label><label class="field">کد کالا<input name="sku" value="پس از ثبت تولید می‌شود" readonly></label><label class="field">موجودی<input name="quantity" type="number" min="0" value="0"></label><label class="field">حداقل موجودی<input name="min_quantity" type="number" min="0" value="0"></label><label class="field"><span class="field-title">قیمت خرید هر عدد (<span class="currency-label">ریال</span>)</span><input name="purchase_price_irr" type="number" min="0" value="0"></label><label class="field"><span class="field-title">ارزش هر عدد (دلار)</span><input name="dollar_price" type="number" min="0" value="0"></label><button type="submit">ذخیره کالا</button></form></div></section>
+<section class="page" id="page-sales"><div class="panel"><div class="panel-head"><div><h2>فاکتور جدید</h2><div class="muted">بارکد یا QR را اسکن کنید، یا با جست‌وجوی نام کالا آن را به فاکتور اضافه کنید.</div></div></div><div class="scan-box"><label class="field">اسکن کد و Enter<input id="barcode-scanner" autocomplete="off" placeholder="مثلاً K-000001"></label><label class="field">تعداد<input id="sale-qty" type="number" min=".01" value="1"></label><button class="light" onclick="focusScanner()">فعال‌سازی اسکنر</button></div><div class="invoice-grid"><div class="invoice-main"><label class="field">نام مشتری<input id="customer"></label><div class="product-picker"><label class="field">جست‌وجوی نام کالا<input id="product-search" autocomplete="off" placeholder="نام کالا را وارد کنید..."></label><div id="product-suggestions" class="product-suggestions"><div class="search-hint">برای افزودن کالا، نام آن را جست‌وجو کنید.</div></div></div><div class="table-wrap"><table><thead><tr><th>کالا</th><th>تعداد</th><th>قیمت فروش واحد</th><th>جمع</th><th></th></tr></thead><tbody id="cart"></tbody></table></div><label class="field discount-field"><span class="field-title">تخفیف (<span class="currency-label">ریال</span>)</span><input id="discount" type="number" min="0" value="0"></label><div class="summary"><div><span>جمع نهایی</span><b id="cart-total">۰</b></div></div><div class="invoice-actions"><button class="green" onclick="createInvoice()">ثبت فاکتور</button><button class="light" onclick="clearCart()">پاک‌کردن</button></div></div></div></div></section>
+<section class="page" id="page-invoices"><div class="panel"><div class="panel-head"><div><h2>سوابق فاکتورها</h2><div class="muted">مشاهده، اصلاح و چاپ.</div></div></div><input class="search" id="invoice-search" placeholder="جست‌وجوی شماره فاکتور یا مشتری"><div class="table-wrap"><table><thead><tr><th>شماره</th><th>مشتری</th><th>ردیف</th><th>مبلغ</th><th>تاریخ</th><th>عملیات</th></tr></thead><tbody id="invoices-list"></tbody></table></div></div></section>
+<section class="page" id="page-settings"><div class="panel settings"><div><h2>تنظیمات</h2><p class="muted">اطلاعات اصلی در دیتابیس به ریال ذخیره می‌شوند؛ این انتخاب فقط ضریب نمایش و ورود قیمت است.</p></div><label class="field">واحد نمایش قیمت‌ها<select id="currency"><option value="irr">ریال</option><option value="irt">تومان</option><option value="usd">دلار</option></select></label><label class="field">نام فروشگاه<input id="store-name" placeholder="نام فروشگاه برای سربرگ فاکتور"></label><label class="field">لینک API نرخ دلار<input id="api-url" placeholder="https://example.com/api/rate"></label><div><button onclick="saveApiUrl()">ذخیره لینک</button> <button class="light" onclick="refreshRate()">دریافت نرخ از API</button></div><label class="field">نرخ دلار (ریال)<input id="rate" type="number" min="1"></label><button onclick="saveRate()">ذخیره نرخ دستی</button></div></section>
+</main></div><div id="toast" class="toast"></div><div class="modal" id="invoice-modal"><div class="modal-card" id="invoice-paper"></div></div>
+<script>
+let products=[],cart=[],lastInvoices=[],editingInvoice=null,currentRate=0,currency=localStorage.getItem('displayCurrency')||'irr',storeName=localStorage.getItem('storeName')||'';const titles={dashboard:'نمای کلی',inventory:'انبار','product-form':'افزودن / ویرایش کالا',sales:'فاکتور جدید',invoices:'سوابق فاکتورها',settings:'تنظیمات'},fa=n=>Number(n||0).toLocaleString('fa-IR'),info=()=>({irr:['ریال',1],irt:['تومان',.1],usd:['دلار',currentRate?1/currentRate:0]}[currency]||['ریال',1]),money=irr=>{const [u,m]=info();return`${fa((Number(irr)||0)*m)} ${u}`},display=irr=>Math.round((Number(irr)||0)*info()[1]*100)/100,toIrr=v=>Number(v||0)/(info()[1]||1);
+async function api(u,o){const r=await fetch(u,o),d=await r.json();if(!r.ok)throw Error(d.detail||'خطا');return d}function esc(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}function go(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===`page-${p}`));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.page===p));document.querySelector('#page-title').textContent=titles[p];history.replaceState(null,'',`#${p}`)}
+document.querySelectorAll('.nav button').forEach(x=>x.onclick=()=>go(x.dataset.page));function qrcode(v,cls='qrcode'){return`<img class="${cls}" src="/api/qrcode?value=${encodeURIComponent(v)}" alt="QR ${esc(v)}">`}
+async function load(){const[d,r,u]=await Promise.all([api('/api/dashboard'),api('/api/exchange-rate'),api('/api/exchange-rate/settings')]);currentRate=r.rate;storeName=u.store_name||'';localStorage.setItem('storeName',storeName);products=await api('/api/products');document.querySelector('#product-count').textContent=fa(d.product_count);document.querySelector('#purchase-total').textContent=money(d.purchase_total_irr);document.querySelector('#market-total').textContent=money(d.market_total_irr);document.querySelector('#low-stock').textContent=fa(d.low_stock_count);document.querySelector('#weekly-sales').textContent=money(d.weekly_sales_irr);document.querySelector('#weekly-profit').textContent=money(d.weekly_profit_irr);document.querySelector('#weekly-invoices').textContent=fa(d.weekly_invoice_count);document.querySelector('#rate').value=r.rate;document.querySelector('#api-url').value=u.url;document.querySelector('#store-name').value=storeName;document.querySelector('#currency').value=currency;document.querySelectorAll('.currency-label').forEach(x=>x.textContent=info()[0]);renderProducts();renderOptions();renderCart();loadInvoices()}
+function renderProducts(){const q=(document.querySelector('#inventory-search')?.value||'').toLowerCase();const list=products.filter(p=>!q||`${p.name} ${p.sku}`.toLowerCase().includes(q));document.querySelector('#products').innerHTML=list.length?list.map(p=>`<tr><td><div class="product"><div class="avatar">${esc(p.name[0]||'ک')}</div><b>${esc(p.name)}</b></div></td><td><div class="qr-cell"><span class="product-code">${esc(p.sku)}</span></div></td><td>${fa(p.quantity)}</td><td>${money(p.purchase_price_irr)}</td><td>${money(p.market_unit_price_irr)}</td><td class="${p.difference_per_unit_irr>=0?'positive':'negative'}">${money(p.difference_per_unit_irr)}</td><td>${money(p.market_value_irr)}</td><td><button class="light" onclick="editProduct(${p.id})">ویرایش</button> <button class="light" onclick="printLabel(${p.id})">چاپ QR</button></td></tr>`).join(''):'<tr><td colspan="8" class="empty">کالایی پیدا نشد.</td></tr>'}document.querySelector('#inventory-search').oninput=renderProducts;
+document.querySelector('#product-form').onsubmit=async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.target)),id=d.id;d.quantity=Number(d.quantity);d.min_quantity=Number(d.min_quantity);d.purchase_price_irr=toIrr(d.purchase_price_irr);d.dollar_price=Number(d.dollar_price);delete d.id;delete d.sku;try{const p=await api(id?`/api/products/${id}`:'/api/products',{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)});resetProductForm();await load();go('inventory');notice(id?'کالا ویرایش شد':`کالا با کد ${p.sku} ثبت شد`)}catch(x){notice(x.message)}};function editProduct(id){const p=products.find(x=>x.id===id),f=document.querySelector('#product-form');f.id.value=p.id;f.name.value=p.name;f.sku.value=p.sku;f.quantity.value=p.quantity;f.min_quantity.value=p.min_quantity;f.purchase_price_irr.value=display(p.purchase_price_irr);f.dollar_price.value=p.dollar_price;document.querySelector('#product-title').textContent='ویرایش کالا';go('product-form')}function resetProductForm(){const f=document.querySelector('#product-form');f.reset();f.id.value='';f.sku.value='پس از ثبت تولید می‌شود';document.querySelector('#product-title').textContent='افزودن کالا'}
+function findProduct(v){const q=v.trim().toUpperCase();return products.find(p=>p.sku.toUpperCase()===q||p.barcode_value.toUpperCase()===q)}function addProduct(p,n=1){if(!p)return notice('کالا پیدا نشد');const old=cart.find(x=>x.product_id===p.id),total=(old?.quantity||0)+n;if(total>p.quantity)return notice('موجودی کافی نیست');if(old)old.quantity=total;else cart.push({product_id:p.id,name:p.name,quantity:n,unit_price_irr:p.market_unit_price_irr});renderCart()}function addToCart(){addProduct(products.find(p=>p.id===Number(document.querySelector('#product-select').value)))}function scan(){const i=document.querySelector('#barcode-scanner'),p=findProduct(i.value);addProduct(p,Number(document.querySelector('#sale-qty').value)||1);i.value='';i.focus()}document.querySelector('#barcode-scanner').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();scan()}};function focusScanner(){document.querySelector('#barcode-scanner').focus()}
+function renderOptions(){renderProductSuggestions()}function renderProductSuggestions(){const box=document.querySelector('#product-suggestions'),input=document.querySelector('#product-search');if(!box||!input)return;const q=input.value.trim().toLowerCase();if(!q){box.innerHTML='<div class="search-hint">برای افزودن کالا، نام آن را جست‌وجو کنید.</div>';return}const list=products.filter(p=>`${p.name} ${p.sku}`.toLowerCase().includes(q));box.innerHTML=list.length?list.map(p=>`<button type="button" class="product-result" onclick="addSearchedProduct(${p.id})"><span><b>${esc(p.name)}</b><small>${esc(p.sku)}</small></span><em>موجودی: ${fa(p.quantity)}</em></button>`).join(''):'<div class="search-hint">کالایی با این مشخصات پیدا نشد.</div>'}function addSearchedProduct(id){addProduct(products.find(p=>p.id===id),Number(document.querySelector('#sale-qty').value)||1);const input=document.querySelector('#product-search');input.value='';renderProductSuggestions();input.focus()}function renderCart(){document.querySelector('#cart').innerHTML=cart.length?cart.map((x,i)=>`<tr><td>${esc(x.name)}</td><td><input style="width:65px" type="number" value="${x.quantity}" onchange="cart[${i}].quantity=Number(this.value);renderCart()"></td><td><input style="width:130px" type="number" value="${display(x.unit_price_irr)}" onchange="cart[${i}].unit_price_irr=toIrr(this.value);renderCart()"></td><td>${money(x.quantity*x.unit_price_irr)}</td><td><button class="danger" onclick="cart.splice(${i},1);renderCart()">×</button></td></tr>`).join(''):'<tr><td colspan="5" class="empty">هنوز کالایی اضافه نشده است.</td></tr>';document.querySelector('#cart-total').textContent=money(Math.max(0,cart.reduce((s,x)=>s+x.quantity*x.unit_price_irr,0)-toIrr(document.querySelector('#discount').value)))}document.querySelector('#discount').oninput=renderCart;document.querySelector('#product-search').oninput=renderProductSuggestions;function clearCart(){cart=[];editingInvoice=null;renderCart()}
+async function createInvoice(){if(!cart.length)return notice('حداقل یک کالا اضافه کنید');try{const body={customer_name:document.querySelector('#customer').value,discount_irr:toIrr(document.querySelector('#discount').value),items:cart.map(x=>({product_id:x.product_id,quantity:x.quantity,unit_price_irr:x.unit_price_irr}))};const i=await api(editingInvoice?`/api/invoices/${editingInvoice}`:'/api/invoices',{method:editingInvoice?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});clearCart();document.querySelector('#customer').value='';document.querySelector('#discount').value=0;await load();go('invoices');showInvoice(i)}catch(x){notice(x.message)}}async function loadInvoices(){lastInvoices=await api('/api/invoices');renderInvoices()}function renderInvoices(){const q=(document.querySelector('#invoice-search')?.value||'').toLowerCase(),list=lastInvoices.filter(i=>!q||`${i.invoice_number} ${i.customer_name}`.toLowerCase().includes(q));document.querySelector('#invoices-list').innerHTML=list.map(i=>`<tr><td>${i.invoice_number}</td><td>${esc(i.customer_name||'بدون نام')}</td><td>${fa(i.items.length)}</td><td>${money(i.total_irr)}</td><td>${new Date(i.created_at).toLocaleDateString('fa-IR')}</td><td><button class="light" onclick='showInvoice(${JSON.stringify(i)})'>مشاهده</button> <button class="light" onclick='editInvoice(${JSON.stringify(i)})'>اصلاح</button></td></tr>`).join('')||'<tr><td colspan="6" class="empty">فاکتوری پیدا نشد.</td></tr>'}document.querySelector('#invoice-search').oninput=renderInvoices;function editInvoice(i){editingInvoice=i.id;cart=i.items.map(x=>({product_id:x.product_id,name:x.product_name,quantity:x.quantity,unit_price_irr:x.unit_price_irr}));document.querySelector('#customer').value=i.customer_name||'';document.querySelector('#discount').value=display(i.discount_irr);go('sales');renderCart()}
+function invoiceHtml(i){const gross=i.items.reduce((s,x)=>s+x.total_irr,0),discount=Number(i.discount_irr||0),shop=storeName.trim();return`<div class="invoice-print-sheet" style="font-family:Tahoma">${shop?`<div class="invoice-store-name">${esc(shop)}</div>`:''}<h1>فاکتور فروش</h1><div class="invoice-meta"><p>شماره: <b>${esc(i.invoice_number)}</b></p><p>تاریخ: ${new Date(i.created_at).toLocaleDateString('fa-IR')}</p><p>مشتری: ${esc(i.customer_name||'بدون نام')}</p></div><table><tr><th>ردیف</th><th>کالا</th><th>تعداد</th><th>قیمت واحد</th><th>مبلغ</th></tr>${i.items.map((x,n)=>`<tr><td>${fa(n+1)}</td><td>${esc(x.product_name)}</td><td>${fa(x.quantity)}</td><td>${money(x.unit_price_irr)}</td><td>${money(x.total_irr)}</td></tr>`).join('')}</table><div class="summary"><div><span>جمع کالاها</span><span>${money(gross)}</span></div><div class="discount-row"><span>تخفیف</span><span>${money(discount)}</span></div><div class="final"><span>مبلغ نهایی</span><span>${money(i.total_irr)}</span></div></div></div>`}function showInvoice(i){document.querySelector('#invoice-paper').innerHTML=invoiceHtml(i)+'<div style="margin-top:18px"><button onclick="printInvoice()">چاپ</button> <button class="light" onclick="closeInvoice()">بستن</button></div>';document.querySelector('#invoice-modal').classList.add('open')}function closeInvoice(){document.querySelector('#invoice-modal').classList.remove('open')}function printInvoice(){const n=document.querySelector('#invoice-paper b').textContent,i=lastInvoices.find(x=>x.invoice_number===n),w=open('','_blank');w.document.write(`<html dir="rtl"><head><meta charset="utf-8"><style>@page{size:A4;margin:16mm}*{box-sizing:border-box}body{font-family:Tahoma,Arial,sans-serif;padding:0;color:#1d2638;max-width:900px;margin:auto;background:#fff;line-height:1.8}.invoice-print-sheet{padding:28px 34px;border:1px solid #e1e5ef;border-radius:18px}.invoice-store-name{text-align:center;font-size:27px;font-weight:bold;color:#343a75;padding-bottom:16px;border-bottom:3px solid #5b5ce2;margin-bottom:18px}h1{font-size:23px;color:#222b4a;margin:0 0 12px}.invoice-meta{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;margin-bottom:18px}.invoice-meta p{margin:0;font-size:13px;color:#546175}table{border-collapse:separate;border-spacing:0;width:100%;margin-top:12px;border:1px solid #dfe3eb;border-radius:12px;overflow:hidden}td,th{border-bottom:1px solid #e7eaf0;padding:11px;text-align:right}th{background:#343a75;color:#fff}tr:last-child td{border-bottom:0}.summary{width:340px;max-width:100%;margin:22px auto 0 0;padding:14px;border:1px solid #e1e5ef;border-radius:12px;background:#f8f9ff}.summary div{display:flex;justify-content:space-between;gap:20px;padding:7px 2px;white-space:nowrap}.summary .discount-row{color:#b34f58}.summary .final{margin-top:6px;padding-top:11px;border-top:2px solid #5b5ce2;font-weight:bold;color:#343a75;font-size:17px}</style></head><body>${invoiceHtml(i)}</body></html>`);w.document.close();setTimeout(()=>w.print(),250)}
+function printLabel(id){const p=products.find(x=>x.id===id),w=open('','_blank','width=500,height=430');w.document.write(`<html dir="rtl"><head><meta charset="utf-8"><style>body{text-align:center;font-family:Tahoma;padding:25px}.name{font-size:20px;font-weight:bold}.code{margin:10px 0 16px}.qr{width:210px;height:210px}</style></head><body><div class="name">${esc(p.name)}</div><div class="code">${esc(p.sku)}</div><img class="qr" src="/api/qrcode?value=${encodeURIComponent(p.sku)}"></body></html>`);w.document.close();setTimeout(()=>w.print(),250)}
+async function saveRate(){try{await api('/api/exchange-rate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rate:Number(document.querySelector('#rate').value)})});await load();notice('نرخ ذخیره شد')}catch(x){notice(x.message)}}async function refreshRate(){try{await api('/api/exchange-rate/refresh',{method:'POST'});await load();notice('نرخ به‌روزرسانی شد')}catch(x){notice(x.message)}}async function saveApiUrl(){try{await api('/api/exchange-rate/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:document.querySelector('#api-url').value})});notice('لینک ذخیره شد')}catch(x){notice(x.message)}}async function saveStoreName(){try{const value=document.querySelector('#store-name').value.trim();const saved=await api('/api/exchange-rate/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({store_name:value})});storeName=saved.store_name||value;localStorage.setItem('storeName',storeName);notice('نام فروشگاه ذخیره شد')}catch(x){notice(x.message)}}document.querySelector('#currency').onchange=e=>{currency=e.target.value;localStorage.setItem('displayCurrency',currency);load()};document.querySelector('#store-name').onchange=saveStoreName;function notice(t){const x=document.querySelector('#toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),3000)}load().then(()=>go(titles[location.hash.slice(1)]?location.hash.slice(1):'dashboard')).catch(x=>notice(x.message));
+</script></body></html>
