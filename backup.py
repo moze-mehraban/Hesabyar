@@ -9,8 +9,6 @@ from pathlib import Path
 
 import requests
 
-TELEGRAM_BOT_TOKEN = "8845594335:AAGTF09LTNKfzVNqEqQXYdSwETExusikCCk"
-
 try:
     from dotenv import load_dotenv
 except ImportError:
@@ -48,7 +46,7 @@ def create_backup(
     target = backup_dir / f"accounting-{datetime.now():%Y%m%d-%H%M%S}.db"
     shutil.copy2(database_path, target)
 
-    token = (telegram_token if telegram_token is not None else TELEGRAM_BOT_TOKEN).strip()
+    token = (telegram_token if telegram_token is not None else os.getenv("TELEGRAM_BOT_TOKEN", "")).strip()
     destination = (
         chat_id if chat_id is not None else os.getenv("TELEGRAM_CHAT_ID", "")
     ).strip()

@@ -22,7 +22,7 @@ from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from backup import BackupError, TELEGRAM_BOT_TOKEN, create_backup
+from backup import BackupError, create_backup
 
 try:
     import qrcode
@@ -548,7 +548,7 @@ def run_backup() -> dict[str, Any]:
         result = create_backup(
             database_path=DB_PATH,
             backup_dir=ROOT / "backups",
-            telegram_token=TELEGRAM_BOT_TOKEN,
+            telegram_token=os.getenv("TELEGRAM_BOT_TOKEN", ""),
             chat_id=settings["chat_id"],
             socks_proxy=settings["socks_proxy"],
         )
