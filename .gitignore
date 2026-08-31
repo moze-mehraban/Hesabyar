@@ -4,3 +4,7 @@ __pycache__/
 .env
 data/*.db
 backups/
+dist/
+build/
+*.ps1
+Hesabyar.spec

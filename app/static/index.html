@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" href="/favicon.png">
 <title>حساب‌یار</title>
 <style>
 :root{--ink:#182230;--muted:#708096;--line:#e8edf3;--brand:#5b5ce2;--green:#11a683;--red:#e05252;--bg:#f6f8fc}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif}.shell{display:flex;min-height:100vh}.side{width:230px;background:#171b34;color:#dce2ff;padding:25px 16px;position:sticky;top:0;height:100vh}.logo{display:flex;gap:10px;align-items:center;font-size:20px;font-weight:bold;margin:0 10px 40px}.logo-mark{width:36px;height:36px;border-radius:12px;background:#6869ec;display:grid;place-items:center}.nav{display:grid;gap:7px}.nav button{width:100%;text-align:right;padding:12px;border:0;border-radius:9px;color:#aab3da;background:transparent;font:inherit;cursor:pointer}.nav button.active{background:#2b2f53;color:#fff}.note{position:absolute;bottom:20px;right:16px;left:16px;padding:12px;border:1px solid #34395e;border-radius:10px;font-size:11px;line-height:1.8;color:#aab3da}.main{flex:1;padding:28px 4vw;max-width:1500px}.page{display:none}.page.active{display:block}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.title h1{margin:0 0 7px;font-size:26px}.muted{color:var(--muted);font-size:12px}.cards,.extra{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.extra{grid-template-columns:repeat(3,1fr);margin-top:15px}.card,.panel{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:0 7px 22px #252b5809}.card{padding:18px}.card .label{color:var(--muted);font-size:12px}.card b{display:block;font-size:21px;margin-top:10px}.hint{font-size:11px;color:var(--green);margin-top:7px}.panel{padding:20px;margin-top:16px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.panel h2{font-size:16px;margin:0}form{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.field{display:grid;gap:6px;color:var(--muted);font-size:12px}input,select{width:100%;border:1px solid #dbe2ec;border-radius:8px;padding:10px;background:#fbfcfe;font:inherit;color:var(--ink)}button{border:0;border-radius:8px;padding:10px 14px;background:var(--brand);color:#fff;font:inherit;cursor:pointer}button.light{background:#eff0ff;color:#4d4ec7}button.green{background:var(--green)}button.danger{background:#fff0f0;color:var(--red);padding:7px 9px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:820px}th,td{text-align:right;padding:12px 9px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--muted);font-size:11px;font-weight:normal}td{font-size:12px}.product{display:flex;align-items:center;gap:8px}.avatar{width:31px;height:31px;border-radius:9px;background:#eef0ff;color:var(--brand);display:grid;place-items:center;font-weight:bold}.positive{color:var(--green)}.negative{color:var(--red)}.qrcode{width:54px;height:54px;vertical-align:middle}.qr-cell{display:flex;align-items:center;gap:6px}.search{margin-bottom:14px;max-width:380px}.invoice-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:20px}.scan-box{display:grid;grid-template-columns:2fr 1fr auto;gap:10px;align-items:end;margin-bottom:17px}.summary{border-top:1px solid var(--line);margin-top:15px;padding-top:12px;display:grid;gap:8px}.summary div{display:flex;justify-content:space-between}.summary .final{font-weight:bold;font-size:16px;border-top:2px solid #222;padding-top:10px}.modal{display:none;position:fixed;inset:0;background:#10152b88;z-index:5;place-items:center;padding:20px}.modal.open{display:grid}.modal-card{background:#fff;border-radius:16px;padding:22px;width:min(650px,100%)}.toast{position:fixed;bottom:20px;left:20px;background:#20263b;color:#fff;padding:12px 16px;border-radius:9px;opacity:0}.toast.show{opacity:1}.settings{max-width:700px;display:grid;gap:14px}@media(max-width:900px){.side{width:70px}.logo span,.nav span,.note{display:none}.cards{grid-template-columns:repeat(2,1fr)}.extra,.invoice-grid,.scan-box{grid-template-columns:1fr}}@media(max-width:600px){.side{display:none}.main{padding:18px 12px}.top{align-items:flex-start;flex-direction:column}.cards,.extra,form{grid-template-columns:1fr}}
@@ -672,7 +672,10 @@ td button {
 }
 
 #invoice-paper table {
-  min-width: 100%;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  table-layout: fixed;
   margin-top: 8px;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -682,6 +685,35 @@ td button {
 #invoice-paper th,
 #invoice-paper td {
   padding: 13px 12px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  vertical-align: middle;
+}
+
+#invoice-paper th:first-child,
+#invoice-paper td:first-child {
+  width: 7%;
+  padding-right: 4px;
+  padding-left: 4px;
+  text-align: center;
+}
+
+#invoice-paper th:nth-child(2),
+#invoice-paper td:nth-child(2) {
+  width: 30%;
+}
+
+#invoice-paper th:nth-child(3),
+#invoice-paper td:nth-child(3) {
+  width: 11%;
+  text-align: center;
+}
+
+#invoice-paper th:nth-child(4),
+#invoice-paper td:nth-child(4),
+#invoice-paper th:nth-child(5),
+#invoice-paper td:nth-child(5) {
+  width: 26%;
 }
 
 #invoice-paper th {
@@ -689,11 +721,11 @@ td button {
   background: #343a75;
 }
 
-#invoice-paper .summary {
-  width: min(390px, 100%);
-  margin: 20px 0 0 auto;
-  background: #f8f9ff;
-}
+  #invoice-paper .summary {
+    width: min(390px, 100%);
+    margin: 20px auto 0 0;
+    background: #f8f9ff;
+  }
 
 #invoice-paper .summary .final {
   padding-top: 12px;
@@ -818,6 +850,227 @@ th {
   color: #fff;
   background: #222c45;
   box-shadow: 0 12px 30px rgba(18, 26, 48, .2);
+}
+
+#print-host {
+  display: none;
+}
+
+  @media print {
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
+    }
+
+    body > *:not(#print-host) {
+      display: none !important;
+    }
+
+    #print-host {
+     display: block !important;
+     direction: rtl;
+     width: 190mm;
+     max-width: 100%;
+     min-width: 0;
+     margin: 0 auto;
+     padding: 0;
+     overflow: visible;
+     color: #1d2638;
+     background: #fff;
+     font-family: Tahoma, Arial, sans-serif;
+    }
+
+  #print-host .invoice-print-sheet {
+     width: 190mm;
+     max-width: 100%;
+     min-width: 0;
+     margin: 0 auto;
+     padding: 8mm;
+     border: 1px solid #dfe3eb;
+     border-radius: 12px;
+     box-shadow: none;
+     overflow: hidden;
+     page-break-inside: avoid;
+     box-sizing: border-box;
+     font-size: 11px;
+     line-height: 1.8;
+    }
+
+  #print-host .invoice-store-name {
+     display: block;
+     padding-bottom: 10px;
+     border-bottom: 2px solid #5b5ce2;
+     margin-bottom: 12px;
+     color: #343a75;
+     font-size: 23px;
+     font-weight: bold;
+     text-align: center;
+    }
+
+  #print-host .invoice-print-sheet h1 {
+     margin: 0 0 9px;
+     padding-bottom: 8px;
+     border-bottom: 1px solid #d7dce8;
+     color: #202844;
+     font-size: 25px;
+     text-align: center;
+   }
+
+  #print-host .invoice-meta {
+     display: grid;
+     grid-template-columns: repeat(3, 1fr);
+     gap: 6px 14px;
+     margin-bottom: 13px;
+     padding: 9px 11px;
+     border: 1px solid #dfe3eb;
+     border-radius: 9px;
+     background: #fafbfe;
+    }
+
+  #print-host .invoice-meta p {
+     margin: 0;
+     color: #3d4658;
+     font-size: 11px;
+    }
+
+  #print-host table {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 10px;
+    border: 1px solid #dfe3eb;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  #print-host .invoice-col-row {
+    width: 7%;
+  }
+
+  #print-host .invoice-col-product {
+    width: 27%;
+  }
+
+  #print-host .invoice-col-quantity {
+    width: 11%;
+  }
+
+  #print-host .invoice-col-unit-price,
+  #print-host .invoice-col-total {
+    width: 27.5%;
+  }
+
+  #print-host th,
+  #print-host td {
+     padding: 8px 6px;
+     min-width: 0;
+     border: 0;
+     border-bottom: 1px solid #dfe3eb;
+     text-align: right;
+     font-size: 11px;
+     white-space: normal;
+     overflow-wrap: anywhere;
+     word-break: break-word;
+     vertical-align: middle;
+   }
+
+  #print-host th:first-child,
+  #print-host td:first-child {
+    width: 7%;
+    padding-right: 3px;
+    padding-left: 3px;
+    text-align: center;
+  }
+
+  #print-host th:nth-child(2),
+  #print-host td:nth-child(2) {
+    width: 30%;
+  }
+
+  #print-host th:nth-child(3),
+  #print-host td:nth-child(3) {
+    width: 11%;
+    text-align: center;
+  }
+
+  #print-host th:nth-child(4),
+  #print-host td:nth-child(4),
+  #print-host th:nth-child(5),
+  #print-host td:nth-child(5) {
+    width: 26%;
+  }
+
+  #print-host thead tr:first-child th:first-child {
+    border-top-right-radius: 11px;
+  }
+
+  #print-host thead tr:first-child th:last-child {
+    border-top-left-radius: 11px;
+  }
+
+  #print-host tbody tr:last-child td:first-child {
+    border-bottom-right-radius: 11px;
+  }
+
+  #print-host tbody tr:last-child td:last-child {
+    border-bottom-left-radius: 11px;
+  }
+
+  #print-host tr:last-child td {
+    border-bottom: 0;
+  }
+
+  #print-host th {
+    color: #fff;
+    background: #343a75;
+  }
+
+  #print-host .summary {
+     width: 340px;
+     margin: 18px auto 0 0;
+     padding: 12px 15px;
+     border: 1px solid #dfe3eb;
+     border-radius: 12px;
+     background: #f8f9ff;
+    }
+
+  #print-host .summary div {
+     padding: 5px 0;
+     font-size: 11px;
+   }
+
+  #print-host .summary .final {
+     border-top: 2px solid #5b5ce2;
+     color: #343a75;
+     font-weight: bold;
+     font-size: 15px;
+   }
+
+  #print-host .qr-print-sheet {
+    padding-top: 35px;
+    color: #111;
+    text-align: center;
+  }
+
+  #print-host .qr-print-sheet .qr-print-name {
+    margin-bottom: 10px;
+    font-size: 21px;
+    font-weight: bold;
+  }
+
+  #print-host .qr-print-sheet .qr-print-code {
+    margin-bottom: 18px;
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  #print-host .qr-print-sheet img {
+    width: 220px;
+    height: 220px;
+  }
 }
 
 @media (max-width: 1100px) {
@@ -945,10 +1198,6 @@ th {
     min-width: 0;
   }
 
-  #invoice-paper > div:last-child {
-    flex-direction: column;
-  }
-
   .settings {
     grid-template-columns: 1fr;
   }
@@ -996,4 +1245,338 @@ async function createInvoice(){if(!cart.length)return notice('حداقل یک ک
 function invoiceHtml(i){const gross=i.items.reduce((s,x)=>s+x.total_irr,0),discount=Number(i.discount_irr||0),shop=storeName.trim();return`<div class="invoice-print-sheet" style="font-family:Tahoma">${shop?`<div class="invoice-store-name">${esc(shop)}</div>`:''}<h1>فاکتور فروش</h1><div class="invoice-meta"><p>شماره: <b>${esc(i.invoice_number)}</b></p><p>تاریخ: ${new Date(i.created_at).toLocaleDateString('fa-IR')}</p><p>مشتری: ${esc(i.customer_name||'بدون نام')}</p></div><table><tr><th>ردیف</th><th>کالا</th><th>تعداد</th><th>قیمت واحد</th><th>مبلغ</th></tr>${i.items.map((x,n)=>`<tr><td>${fa(n+1)}</td><td>${esc(x.product_name)}</td><td>${fa(x.quantity)}</td><td>${money(x.unit_price_irr)}</td><td>${money(x.total_irr)}</td></tr>`).join('')}</table><div class="summary"><div><span>جمع کالاها</span><span>${money(gross)}</span></div><div class="discount-row"><span>تخفیف</span><span>${money(discount)}</span></div><div class="final"><span>مبلغ نهایی</span><span>${money(i.total_irr)}</span></div></div></div>`}function showInvoice(i){document.querySelector('#invoice-paper').innerHTML=invoiceHtml(i)+'<div style="margin-top:18px"><button onclick="printInvoice()">چاپ</button> <button class="light" onclick="closeInvoice()">بستن</button></div>';document.querySelector('#invoice-modal').classList.add('open')}function closeInvoice(){document.querySelector('#invoice-modal').classList.remove('open')}function printInvoice(){const n=document.querySelector('#invoice-paper b').textContent,i=lastInvoices.find(x=>x.invoice_number===n),w=open('','_blank');w.document.write(`<html dir="rtl"><head><meta charset="utf-8"><style>@page{size:A4;margin:16mm}*{box-sizing:border-box}body{font-family:Tahoma,Arial,sans-serif;padding:0;color:#1d2638;max-width:900px;margin:auto;background:#fff;line-height:1.8}.invoice-print-sheet{padding:28px 34px;border:1px solid #e1e5ef;border-radius:18px}.invoice-store-name{text-align:center;font-size:27px;font-weight:bold;color:#343a75;padding-bottom:16px;border-bottom:3px solid #5b5ce2;margin-bottom:18px}h1{font-size:23px;color:#222b4a;margin:0 0 12px}.invoice-meta{display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;margin-bottom:18px}.invoice-meta p{margin:0;font-size:13px;color:#546175}table{border-collapse:separate;border-spacing:0;width:100%;margin-top:12px;border:1px solid #dfe3eb;border-radius:12px;overflow:hidden}td,th{border-bottom:1px solid #e7eaf0;padding:11px;text-align:right}th{background:#343a75;color:#fff}tr:last-child td{border-bottom:0}.summary{width:340px;max-width:100%;margin:22px auto 0 0;padding:14px;border:1px solid #e1e5ef;border-radius:12px;background:#f8f9ff}.summary div{display:flex;justify-content:space-between;gap:20px;padding:7px 2px;white-space:nowrap}.summary .discount-row{color:#b34f58}.summary .final{margin-top:6px;padding-top:11px;border-top:2px solid #5b5ce2;font-weight:bold;color:#343a75;font-size:17px}</style></head><body>${invoiceHtml(i)}</body></html>`);w.document.close();setTimeout(()=>w.print(),250)}
 function printLabel(id){const p=products.find(x=>x.id===id),w=open('','_blank','width=500,height=430');w.document.write(`<html dir="rtl"><head><meta charset="utf-8"><style>body{text-align:center;font-family:Tahoma;padding:25px}.name{font-size:20px;font-weight:bold}.code{margin:10px 0 16px}.qr{width:210px;height:210px}</style></head><body><div class="name">${esc(p.name)}</div><div class="code">${esc(p.sku)}</div><img class="qr" src="/api/qrcode?value=${encodeURIComponent(p.sku)}"></body></html>`);w.document.close();setTimeout(()=>w.print(),250)}
 async function saveRate(){try{await api('/api/exchange-rate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rate:Number(document.querySelector('#rate').value)})});await load();notice('نرخ ذخیره شد')}catch(x){notice(x.message)}}async function refreshRate(){try{await api('/api/exchange-rate/refresh',{method:'POST'});await load();notice('نرخ به‌روزرسانی شد')}catch(x){notice(x.message)}}async function saveApiUrl(){try{await api('/api/exchange-rate/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:document.querySelector('#api-url').value})});notice('لینک ذخیره شد')}catch(x){notice(x.message)}}async function saveStoreName(){try{const value=document.querySelector('#store-name').value.trim();const saved=await api('/api/exchange-rate/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({store_name:value})});storeName=saved.store_name||value;localStorage.setItem('storeName',storeName);notice('نام فروشگاه ذخیره شد')}catch(x){notice(x.message)}}document.querySelector('#currency').onchange=e=>{currency=e.target.value;localStorage.setItem('displayCurrency',currency);load()};document.querySelector('#store-name').onchange=saveStoreName;function notice(t){const x=document.querySelector('#toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),3000)}load().then(()=>go(titles[location.hash.slice(1)]?location.hash.slice(1):'dashboard')).catch(x=>notice(x.message));
-</script></body></html>
+function printCurrentHtml(html){let host=document.querySelector('#print-host');if(host)host.remove();host=document.createElement('div');host.id='print-host';host.innerHTML=html;document.body.appendChild(host);let printed=false,cleaned=false;const cleanup=()=>{if(cleaned)return;cleaned=true;if(host.parentNode)host.remove()};const openPrint=()=>{if(printed)return;printed=true;requestAnimationFrame(()=>window.print())};window.addEventListener('afterprint',cleanup,{once:true});const images=[...host.querySelectorAll('img')];const imageReady=Promise.all(images.map(img=>{if(img.complete&&img.naturalWidth>0)return Promise.resolve();return new Promise(resolve=>{const done=()=>{img.removeEventListener('load',done);img.removeEventListener('error',done);resolve()};img.addEventListener('load',done,{once:true});img.addEventListener('error',done,{once:true})})}));imageReady.then(openPrint);setTimeout(openPrint,3000);setTimeout(cleanup,6000)}function printInvoice(){const n=document.querySelector('#invoice-paper b')?.textContent,i=lastInvoices.find(x=>x.invoice_number===n);if(i)printCurrentHtml(invoiceHtml(i))}function printLabel(id){const p=products.find(x=>x.id===id);if(p)printCurrentHtml(`<div class="qr-print-sheet"><div class="qr-print-name">${esc(p.name)}</div><div class="qr-print-code">${esc(p.sku)}</div><img src="/api/qrcode?value=${encodeURIComponent(p.sku)}" alt="QR ${esc(p.sku)}"></div>`)}
+</script>
+<style>
+  .stock-limit {
+    display: block;
+    margin-top: 2px;
+    color: #718096;
+    font-size: 10px;
+  }
+
+  @media print {
+    #print-host .invoice-print-sheet {
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    #print-host .invoice-print-sheet h1 {
+      margin: 0 0 6px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #d7dce8;
+      color: #202844;
+      font-size: 22px;
+      text-align: center;
+    }
+
+    #print-host .invoice-store-name {
+      margin-bottom: 10px;
+      padding-bottom: 9px;
+      border-bottom-width: 2px;
+      font-size: 20px;
+    }
+
+    #print-host .invoice-meta {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px 14px;
+      margin-bottom: 12px;
+      padding: 9px 11px;
+      border: 1px solid #dfe3eb;
+      border-radius: 8px;
+      background: #fafbfe;
+    }
+
+    #print-host .invoice-meta p {
+      margin: 0;
+      color: #3d4658;
+      font-size: 10px;
+    }
+
+    #print-host table {
+      margin-top: 8px;
+      width: 100%;
+      max-width: 100%;
+      table-layout: fixed;
+      page-break-inside: auto;
+    }
+
+    #print-host tr {
+      page-break-inside: avoid;
+      page-break-after: auto;
+    }
+
+    #print-host th,
+    #print-host td {
+      padding: 7px 8px;
+      font-size: 10px;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    #print-host th {
+      color: #fff;
+      background: #343a75 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    #print-host .summary {
+      width: 290px;
+      max-width: 100%;
+      margin-top: 14px;
+      padding: 9px 11px;
+      border-radius: 8px;
+      background: #fafbfe;
+    }
+
+    #print-host .summary div {
+      padding: 4px 0;
+      font-size: 10px;
+    }
+
+    #print-host .summary .final {
+      padding-top: 7px;
+      font-size: 14px;
+    }
+  }
+</style>
+<script>
+  window.__editingOriginalQuantities = {};
+
+  function availableQuantity(item) {
+    const product = products.find(p => p.id === item.product_id);
+    return product ? product.quantity + (window.__editingOriginalQuantities[item.product_id] || 0) : 0;
+  }
+
+  function renderProductSuggestions() {
+    const box = document.querySelector('#product-suggestions');
+    const input = document.querySelector('#product-search');
+    if (!box || !input) return;
+    const query = input.value.trim().toLowerCase();
+    if (!query) {
+      box.innerHTML = '<div class="search-hint">برای افزودن کالا، نام آن را جست‌وجو کنید.</div>';
+      return;
+    }
+    const list = products.filter(product =>
+      product.quantity > 0 &&
+      `${product.name} ${product.sku}`.toLowerCase().includes(query)
+    );
+    box.innerHTML = list.length
+      ? list.map(product => `<button type="button" class="product-result" onclick="addSearchedProduct(${product.id})">
+          <span><b>${esc(product.name)}</b><small>${esc(product.sku)}</small></span>
+          <em>موجودی: ${fa(product.quantity)}</em>
+        </button>`).join('')
+      : '<div class="search-hint">کالای دارای موجودی با این مشخصات پیدا نشد.</div>';
+  }
+
+  document.querySelector('#product-search').oninput = renderProductSuggestions;
+
+  function setCartQuantity(index, value) {
+    const item = cart[index];
+    const maximum = availableQuantity(item);
+    const entered = Number(value);
+    const quantity = Math.min(Math.max(Number.isFinite(entered) ? Math.floor(entered) : 0, 1), Math.floor(maximum));
+    if (quantity !== entered) {
+      notice(maximum ? `تعداد باید عدد صحیح بین ۱ تا ${fa(Math.floor(maximum))} باشد` : 'این کالا موجودی ندارد');
+    }
+    item.quantity = quantity;
+    renderCart();
+  }
+
+  function addProduct(product, quantity = 1) {
+    if (!product) return notice('کالا پیدا نشد');
+    quantity = Math.floor(Number(quantity));
+    if (!Number.isFinite(quantity) || quantity < 1) return notice('تعداد باید حداقل ۱ و عدد صحیح باشد');
+    const old = cart.find(item => item.product_id === product.id);
+    const total = (old?.quantity || 0) + quantity;
+    if (total > availableQuantity({ product_id: product.id })) return notice('موجودی کافی نیست');
+    if (old) old.quantity = total;
+    else cart.push({ product_id: product.id, name: product.name, quantity, unit_price_irr: product.market_unit_price_irr });
+    renderCart();
+  }
+
+  function renderCart() {
+    document.querySelector('#cart').innerHTML = cart.length
+      ? cart.map((item, index) => `<tr>
+          <td>${esc(item.name)}</td>
+          <td>
+            <input style="width:75px" type="number" min="1" max="${Math.floor(availableQuantity(item))}" step="1"
+              value="${item.quantity}" onchange="setCartQuantity(${index}, this.value)">
+            <small class="stock-limit">سقف موجودی: ${fa(availableQuantity(item))}</small>
+          </td>
+          <td><input style="width:130px" type="number" value="${display(item.unit_price_irr)}"
+            onchange="cart[${index}].unit_price_irr=toIrr(this.value);renderCart()"></td>
+          <td>${money(item.quantity * item.unit_price_irr)}</td>
+          <td><button class="danger" onclick="cart.splice(${index},1);renderCart()">×</button></td>
+        </tr>`).join('')
+      : '<tr><td colspan="5" class="empty">هنوز کالایی اضافه نشده است.</td></tr>';
+    document.querySelector('#cart-total').textContent = money(Math.max(
+      0,
+      cart.reduce((sum, item) => sum + item.quantity * item.unit_price_irr, 0)
+        - toIrr(document.querySelector('#discount').value)
+    ));
+  }
+
+  function clearCart() {
+    cart = [];
+    editingInvoice = null;
+    window.__editingOriginalQuantities = {};
+    renderCart();
+  }
+
+  function editInvoice(invoice) {
+    editingInvoice = invoice.id;
+    window.__editingOriginalQuantities = {};
+    invoice.items.forEach(item => {
+      window.__editingOriginalQuantities[item.product_id] =
+        (window.__editingOriginalQuantities[item.product_id] || 0) + item.quantity;
+    });
+    cart = invoice.items.map(item => ({
+      product_id: item.product_id,
+      name: item.product_name,
+      quantity: item.quantity,
+      unit_price_irr: item.unit_price_irr
+    }));
+    document.querySelector('#customer').value = invoice.customer_name || '';
+    document.querySelector('#discount').value = display(invoice.discount_irr);
+    go('sales');
+    renderCart();
+  }
+
+  function invoiceHtml(invoice) {
+    const gross = invoice.items.reduce((sum, item) => sum + item.total_irr, 0);
+    const discount = Number(invoice.discount_irr || 0);
+    const shop = storeName.trim();
+    return `<div class="invoice-print-sheet">
+      ${shop ? `<div class="invoice-store-name">${esc(shop)}</div>` : ''}
+      <h1>فاکتور فروش</h1>
+      <div class="invoice-meta">
+        <p>شماره فاکتور: <b>${esc(invoice.invoice_number)}</b></p>
+        <p>تاریخ: ${new Date(invoice.created_at).toLocaleDateString('fa-IR')}</p>
+        <p>مشتری: ${esc(invoice.customer_name || 'بدون نام')}</p>
+      </div>
+      <table>
+        <colgroup>
+          <col class="invoice-col-row">
+          <col class="invoice-col-product">
+          <col class="invoice-col-quantity">
+          <col class="invoice-col-unit-price">
+          <col class="invoice-col-total">
+        </colgroup>
+        <thead><tr><th>ردیف</th><th>کالا</th><th>تعداد</th><th>قیمت واحد</th><th>مبلغ</th></tr></thead>
+        <tbody>${invoice.items.map((item, index) => `<tr>
+          <td>${fa(index + 1)}</td>
+          <td>${esc(item.product_name)}<br><small>${esc(item.sku)}</small></td>
+          <td>${fa(item.quantity)}</td>
+          <td>${money(item.unit_price_irr)}</td>
+          <td>${money(item.total_irr)}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+      <div class="summary">
+        <div><span>جمع کالاها</span><span>${money(gross)}</span></div>
+        <div class="discount-row"><span>تخفیف</span><span>${money(discount)}</span></div>
+        <div class="final"><span>مبلغ نهایی</span><span>${money(invoice.total_irr)}</span></div>
+      </div>
+    </div>`;
+  }
+</script>
+<script>
+(function () {
+  const settingsPanel = document.querySelector('#page-settings .settings');
+  if (!settingsPanel) return;
+
+  const style = document.createElement('style');
+  style.textContent = `
+    .backup-settings {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px 22px;
+      margin-top: 6px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+    .backup-settings h3,
+    .backup-settings p,
+    .backup-settings .backup-actions {
+      grid-column: 1 / -1;
+    }
+    .backup-settings h3 { margin: 0; font-size: 15px; }
+    .backup-settings p { margin: -6px 0 0; }
+    .backup-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    @media (max-width: 600px) {
+      .backup-settings { grid-template-columns: 1fr; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  const section = document.createElement('div');
+  section.className = 'backup-settings';
+  section.innerHTML = `
+    <h3>پشتیبان‌گیری</h3>
+    <p class="muted">بکاپ محلی ساخته می‌شود و در صورت تنظیم توکن، به تلگرام هم ارسال خواهد شد.</p>
+    <label class="field">شناسه چت تلگرام
+      <input id="backup-chat-id" type="text" placeholder="مثلاً 123456789">
+    </label>
+    <label class="field">پروکسی SOCKS
+      <input id="backup-socks-proxy" type="text" placeholder="socks5h://127.0.0.1:1080">
+    </label>
+    <div class="backup-actions">
+      <button type="button" onclick="saveBackupSettings()">ذخیره تنظیمات بکاپ</button>
+      <button type="button" class="green" onclick="runBackup()">پشتیبان‌گیری الآن</button>
+    </div>
+  `;
+  settingsPanel.appendChild(section);
+
+  window.loadBackupSettings = async function () {
+    try {
+      const settings = await api('/api/backup/settings');
+      document.querySelector('#backup-chat-id').value = settings.chat_id || '';
+      document.querySelector('#backup-socks-proxy').value = settings.socks_proxy || '';
+    } catch (error) {
+      notice(error.message);
+    }
+  };
+
+  window.saveBackupSettings = async function () {
+    try {
+      await api('/api/backup/settings', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          chat_id: document.querySelector('#backup-chat-id').value.trim(),
+          socks_proxy: document.querySelector('#backup-socks-proxy').value.trim()
+        })
+      });
+      notice('تنظیمات بکاپ ذخیره شد');
+    } catch (error) {
+      notice(error.message);
+    }
+  };
+
+  window.runBackup = async function () {
+    const button = document.querySelector('.backup-actions button.green');
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'در حال تهیه بکاپ...';
+    }
+    try {
+      const result = await api('/api/backup', {method: 'POST'});
+      notice(result.telegram_sent
+        ? 'بکاپ ساخته و به تلگرام ارسال شد'
+        : 'بکاپ محلی ساخته شد؛ توکن یا Chat ID تنظیم نشده است');
+    } catch (error) {
+      notice(error.message);
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = 'پشتیبان‌گیری الآن';
+      }
+    }
+  };
+
+  loadBackupSettings();
+})();
+</script>
+</body></html>

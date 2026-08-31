@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import io
 import os
+import shutil
 import sqlite3
 import sys
 import urllib.request
@@ -21,6 +22,8 @@ from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from backup import BackupError, TELEGRAM_BOT_TOKEN, create_backup
+
 try:
     import qrcode
 except ImportError:
@@ -31,13 +34,23 @@ load_dotenv()
 if getattr(sys, "frozen", False):
     ROOT = Path(sys.executable).resolve().parent
     STATIC_ROOT = Path(getattr(sys, "_MEIPASS", ROOT)) / "app" / "static"
+    FAVICON_ROOT = Path(getattr(sys, "_MEIPASS", ROOT)) / "app"
 else:
     ROOT = Path(__file__).resolve().parent.parent
     STATIC_ROOT = Path(__file__).resolve().parent / "static"
-DB_PATH = Path(os.getenv("DATABASE_PATH", "data/accounting.db"))
-if not DB_PATH.is_absolute():
-    DB_PATH = ROOT / DB_PATH
+    FAVICON_ROOT = Path(__file__).resolve().parent
+APP_DATA_DIR = Path.home() / "Documents" / "Hesabyar"
+DB_PATH = APP_DATA_DIR / "accounting.db"
 DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+LEGACY_DB_PATH = ROOT / "data" / "accounting.db"
+PREVIOUS_DB_PATH = Path.home() / "Hesabyar" / "accounting.db"
+if not DB_PATH.exists():
+    source_db = next(
+        (path for path in (PREVIOUS_DB_PATH, LEGACY_DB_PATH) if path.exists()),
+        None,
+    )
+    if source_db:
+        shutil.copy2(source_db, DB_PATH)
 
 app = FastAPI(title="حساب‌یار انبار", version="0.1.0")
 app.mount("/static", StaticFiles(directory=STATIC_ROOT), name="static")
@@ -105,6 +118,15 @@ def initialize() -> None:
                 "INSERT INTO settings(key, value, updated_at) VALUES (?, ?, ?)",
                 ("store_name", "", now()),
             )
+        for key, environment_key in (
+            ("backup_chat_id", "TELEGRAM_CHAT_ID"),
+            ("backup_socks_proxy", "SOCKS_PROXY"),
+        ):
+            if db.execute("SELECT 1 FROM settings WHERE key = ?", (key,)).fetchone() is None:
+                db.execute(
+                    "INSERT INTO settings(key, value, updated_at) VALUES (?, ?, ?)",
+                    (key, os.getenv(environment_key, ""), now()),
+                )
         invoice_columns = {
             row["name"] for row in db.execute("PRAGMA table_info(invoice_items)").fetchall()
         }
@@ -136,9 +158,14 @@ class ApiUrlInput(BaseModel):
     store_name: str | None = Field(default=None, max_length=200)
 
 
+class BackupSettingsInput(BaseModel):
+    chat_id: str | None = Field(default=None, max_length=200)
+    socks_proxy: str | None = Field(default=None, max_length=500)
+
+
 class InvoiceItemInput(BaseModel):
     product_id: int = Field(gt=0)
-    quantity: float = Field(gt=0)
+    quantity: float = Field(gt=0, multiple_of=1)
     unit_price_irr: float | None = Field(default=None, ge=0)
 
 
@@ -182,6 +209,16 @@ def startup() -> None:
 @app.get("/")
 def home() -> FileResponse:
     return FileResponse(STATIC_ROOT / "index.html")
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon_ico() -> FileResponse:
+    return FileResponse(FAVICON_ROOT / "favicon.ico", media_type="image/x-icon")
+
+
+@app.get("/favicon.png", include_in_schema=False)
+def favicon_png() -> FileResponse:
+    return FileResponse(FAVICON_ROOT / "favicon.png", media_type="image/png")
 
 
 @app.get("/api/qrcode")
@@ -275,13 +312,18 @@ def create_invoice(payload: InvoiceInput) -> dict[str, Any]:
         rate = current_rate(db)
         prepared: list[dict[str, Any]] = []
         gross_total = 0.0
+        requested_totals: dict[int, float] = {}
+        for requested in payload.items:
+            requested_totals[requested.product_id] = (
+                requested_totals.get(requested.product_id, 0) + requested.quantity
+            )
         for requested in payload.items:
             product = db.execute(
                 "SELECT * FROM products WHERE id = ?", (requested.product_id,)
             ).fetchone()
             if not product:
                 raise HTTPException(status_code=404, detail="یکی از کالاها پیدا نشد")
-            if product["quantity"] < requested.quantity:
+            if product["quantity"] < requested_totals[requested.product_id]:
                 raise HTTPException(
                     status_code=400,
                     detail=f"موجودی «{product['name']}» کافی نیست",
@@ -369,13 +411,18 @@ def update_invoice(invoice_id: int, payload: InvoiceInput) -> dict[str, Any]:
 
         prepared: list[dict[str, Any]] = []
         gross_total = 0.0
+        requested_totals: dict[int, float] = {}
+        for requested in payload.items:
+            requested_totals[requested.product_id] = (
+                requested_totals.get(requested.product_id, 0) + requested.quantity
+            )
         for requested in payload.items:
             product = db.execute(
                 "SELECT * FROM products WHERE id = ?", (requested.product_id,)
             ).fetchone()
             if not product:
                 raise HTTPException(status_code=404, detail="یکی از کالاها پیدا نشد")
-            if product["quantity"] < requested.quantity:
+            if product["quantity"] < requested_totals[requested.product_id]:
                 raise HTTPException(status_code=400, detail=f"موجودی «{product['name']}» کافی نیست")
             unit_price = (
                 requested.unit_price_irr
@@ -462,13 +509,66 @@ def set_exchange_rate_settings(payload: ApiUrlInput) -> dict[str, str]:
     return get_exchange_rate_settings()
 
 
+@app.get("/api/backup/settings")
+def get_backup_settings() -> dict[str, str]:
+    with connect() as db:
+        rows = db.execute(
+            "SELECT key, value FROM settings "
+            "WHERE key IN ('backup_chat_id', 'backup_socks_proxy')"
+        ).fetchall()
+    values = {row["key"]: row["value"] for row in rows}
+    return {
+        "chat_id": values.get("backup_chat_id", ""),
+        "socks_proxy": values.get("backup_socks_proxy", ""),
+    }
+
+
+@app.post("/api/backup/settings")
+def set_backup_settings(payload: BackupSettingsInput) -> dict[str, str]:
+    with connect() as db:
+        if payload.chat_id is not None:
+            db.execute(
+                "UPDATE settings SET value=?, updated_at=? "
+                "WHERE key='backup_chat_id'",
+                (payload.chat_id.strip(), now()),
+            )
+        if payload.socks_proxy is not None:
+            db.execute(
+                "UPDATE settings SET value=?, updated_at=? "
+                "WHERE key='backup_socks_proxy'",
+                (payload.socks_proxy.strip(), now()),
+            )
+    return get_backup_settings()
+
+
+@app.post("/api/backup")
+def run_backup() -> dict[str, Any]:
+    settings = get_backup_settings()
+    try:
+        result = create_backup(
+            database_path=DB_PATH,
+            backup_dir=ROOT / "backups",
+            telegram_token=TELEGRAM_BOT_TOKEN,
+            chat_id=settings["chat_id"],
+            socks_proxy=settings["socks_proxy"],
+        )
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="فایل دیتابیس پیدا نشد")
+    except BackupError as exc:
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+    return {
+        "filename": result.target.name,
+        "telegram_sent": result.telegram_sent,
+    }
+
+
 @app.post("/api/exchange-rate/refresh")
 def refresh_exchange_rate() -> dict[str, Any]:
     api_url = get_exchange_rate_settings()["url"].strip() or os.getenv("EXCHANGE_RATE_API_URL", "").strip()
     if not api_url:
         raise HTTPException(status_code=400, detail="آدرس API نرخ ارز تنظیم نشده است")
     try:
-        with urllib.request.urlopen(api_url, timeout=10) as response:
+        with urllib.request.urlopen(api_url, timeout=100) as response:
             data = json.loads(response.read().decode("utf-8"))
         candidates = []
         if isinstance(data.get("usd"), dict) and "value" in data["usd"]:
