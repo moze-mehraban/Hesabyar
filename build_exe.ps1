@@ -5,4 +5,4 @@ if (-not (Test-Path $python)) {
 }
 & $python -m pip install -r (Join-Path $PSScriptRoot "requirements.txt")
 & $python -m PyInstaller --noconfirm --clean --onefile --noconsole --icon "app\favicon.ico" --name Hesabyar --add-data "app\static;app\static" --add-data "app\favicon.ico;app" --add-data "app\favicon.png;app" run_app.py
-Write-Host "Executable created at dist\Hesabyar.exe"
+Write-Host "Executable created at dist\Hesabyar.exe :))"

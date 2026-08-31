@@ -1221,8 +1221,38 @@ th {
   }
 }
 </style>
+<style>
+  .seller-connection-modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(18,26,48,.55);backdrop-filter:blur(5px)}
+  .seller-connection-modal.hidden{display:none}
+  .seller-connection-card{width:min(520px,100%);padding:28px;border-radius:20px;background:#fff;box-shadow:0 24px 60px rgba(18,26,48,.25)}
+  .seller-connection-card h2{margin:0 0 6px}.seller-connection-card form{display:grid;gap:14px;margin-top:20px}
+  .seller-connection-error{min-height:24px;color:#c14e58;font-size:12px}
+  /* نسخه فروشنده: فقط صدور فاکتور، سوابق و واحد پولی */
+  #page-dashboard,#page-inventory,#page-product-form,
+  .nav button[data-page="dashboard"],.nav button[data-page="inventory"],
+  .nav button[data-page="product-form"],
+  #page-settings .settings > label:has(#store-name),
+  #page-settings .settings > label:has(#api-url),
+  #page-settings .settings > label:has(#rate),
+  #page-settings .settings > div:nth-of-type(2),
+  #page-settings .settings > button,
+  .backup-settings
+</style>
 </head>
 <body>
+<div class="seller-connection-modal" id="seller-connection-modal">
+  <div class="seller-connection-card">
+    <h2>اتصال به سیستم مرکزی</h2>
+    <div class="muted">IP سیستمی را وارد کنید که برنامه اصلی و دیتابیس روی آن اجرا می‌شود.</div>
+    <form id="seller-connection-form">
+      <label class="field">IP سیستم مرکزی
+        <input id="seller-server-ip" type="text" placeholder="مثلاً 192.168.1.20" autofocus required>
+      </label>
+      <div id="seller-connection-error" class="seller-connection-error"></div>
+      <button type="submit">اتصال و ورود</button>
+    </form>
+  </div>
+</div>
 <div class="shell"><aside class="side"><div class="logo"><div class="logo-mark">✓</div><span>حساب‌یار</span></div><nav class="nav"><button data-page="dashboard">▦ <span>نمای کلی</span></button><button data-page="inventory">▣ <span>انبار</span></button><button data-page="product-form">＋ <span>افزودن / ویرایش کالا</span></button><button data-page="sales">↕ <span>فاکتور جدید</span></button><button data-page="invoices">▤ <span>سوابق فاکتورها</span></button><button data-page="settings">⚙ <span>تنظیمات</span></button></nav></aside>
 <main class="main"><header class="top"><div class="title"><h1 id="page-title">نمای کلی</h1><div class="muted">مدیریت موجودی، قیمت و فاکتور</div></div></header>
 <section class="page" id="page-dashboard"><div class="cards"><div class="card"><div class="label">تعداد کالاها</div><b id="product-count">۰</b><div class="hint">کالای ثبت‌شده</div></div><div class="card"><div class="label">ارزش خرید انبار</div><b id="purchase-total">۰</b><div class="hint">کل موجودی</div></div><div class="card"><div class="label">ارزش فعلی انبار</div><b id="market-total">۰</b><div class="hint">با نرخ دلار</div></div><div class="card"><div class="label">هشدار موجودی</div><b id="low-stock">۰</b><div class="hint">نیازمند بررسی</div></div></div><div class="extra"><div class="card"><div class="label">دریافتی ۷ روز اخیر</div><b id="weekly-sales">۰</b></div><div class="card"><div class="label">سود خالص ۷ روز اخیر</div><b id="weekly-profit">۰</b></div><div class="card"><div class="label">فاکتورهای ۷ روز اخیر</div><b id="weekly-invoices">۰</b></div></div><div class="panel"><h2>دسترسی سریع</h2><p class="muted">بخش موردنظر را انتخاب کنید.</p><button onclick="go('product-form')">ثبت کالا</button><button class="green" onclick="go('sales')">فاکتور جدید</button><button class="light" onclick="go('inventory')">مشاهده انبار</button></div></section>
@@ -1247,6 +1277,23 @@ function printLabel(id){const p=products.find(x=>x.id===id),w=open('','_blank','
 async function saveRate(){try{await api('/api/exchange-rate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rate:Number(document.querySelector('#rate').value)})});await load();notice('نرخ ذخیره شد')}catch(x){notice(x.message)}}async function refreshRate(){try{await api('/api/exchange-rate/refresh',{method:'POST'});await load();notice('نرخ به‌روزرسانی شد')}catch(x){notice(x.message)}}async function saveApiUrl(){try{await api('/api/exchange-rate/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:document.querySelector('#api-url').value})});notice('لینک ذخیره شد')}catch(x){notice(x.message)}}async function saveStoreName(){try{const value=document.querySelector('#store-name').value.trim();const saved=await api('/api/exchange-rate/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({store_name:value})});storeName=saved.store_name||value;localStorage.setItem('storeName',storeName);notice('نام فروشگاه ذخیره شد')}catch(x){notice(x.message)}}document.querySelector('#currency').onchange=e=>{currency=e.target.value;localStorage.setItem('displayCurrencyV2',currency);load()};document.querySelector('#store-name').onchange=saveStoreName;function notice(t){const x=document.querySelector('#toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),3000)}load().then(()=>go(titles[location.hash.slice(1)]?location.hash.slice(1):'dashboard')).catch(x=>notice(x.message));
 function printCurrentHtml(html){let host=document.querySelector('#print-host');if(host)host.remove();host=document.createElement('div');host.id='print-host';host.innerHTML=html;document.body.appendChild(host);let printed=false,cleaned=false;const cleanup=()=>{if(cleaned)return;cleaned=true;if(host.parentNode)host.remove()};const openPrint=()=>{if(printed)return;printed=true;requestAnimationFrame(()=>window.print())};window.addEventListener('afterprint',cleanup,{once:true});const images=[...host.querySelectorAll('img')];const imageReady=Promise.all(images.map(img=>{if(img.complete&&img.naturalWidth>0)return Promise.resolve();return new Promise(resolve=>{const done=()=>{img.removeEventListener('load',done);img.removeEventListener('error',done);resolve()};img.addEventListener('load',done,{once:true});img.addEventListener('error',done,{once:true})})}));imageReady.then(openPrint);setTimeout(openPrint,3000);setTimeout(cleanup,6000)}function printInvoice(){const n=document.querySelector('#invoice-paper b')?.textContent,i=lastInvoices.find(x=>x.invoice_number===n);if(i)printCurrentHtml(invoiceHtml(i))}function printLabel(id){const p=products.find(x=>x.id===id);if(p)printCurrentHtml(`<div class="qr-print-sheet"><div class="qr-print-name">${esc(p.name)}</div><div class="qr-print-code">${esc(p.sku)}</div><img src="/api/qrcode?value=${encodeURIComponent(p.sku)}" alt="QR ${esc(p.sku)}"></div>`)}
 </script>
+<style>
+  /* نسخه فروشنده: فقط فروش، سوابق فاکتورها و واحد پولی */
+  #page-dashboard,
+  #page-inventory,
+  #page-product-form,
+  .nav button[data-page="dashboard"],
+  .nav button[data-page="inventory"],
+  .nav button[data-page="product-form"],
+  #page-settings .settings > label:has(#store-name),
+  #page-settings .settings > label:has(#api-url),
+  #page-settings .settings > label:has(#rate),
+  #page-settings .settings > div:nth-of-type(2),
+  #page-settings .settings > button,
+  .backup-settings {
+    display: none !important;
+  }
+</style>
 <style>
   .stock-limit {
     display: block;
@@ -1547,7 +1594,7 @@ function printCurrentHtml(html){let host=document.querySelector('#print-host');i
         body: JSON.stringify({
           chat_id: document.querySelector('#backup-chat-id').value.trim(),
           socks_proxy: document.querySelector('#backup-socks-proxy').value.trim()
-        })
+}) 
       });
       notice('تنظیمات بکاپ ذخیره شد');
     } catch (error) {
@@ -1580,8 +1627,39 @@ function printCurrentHtml(html){let host=document.querySelector('#print-host');i
 })();
 </script>
 <script>
-  // همگام‌سازی خودکار با تغییرات ثبت‌شده در همین دیتابیس.
+  // صفحه پیش‌فرض نسخه فروشنده باید فرم صدور فاکتور باشد.
+  const sellerGo = go;
+  go = page => sellerGo(page === 'dashboard' ? 'sales' : page);
+</script>
+<script>
+  const sellerOriginalGo = go;
+  go = page => sellerOriginalGo(page === 'dashboard' ? 'sales' : page);
+  const sellerConnectionModal = document.querySelector('#seller-connection-modal');
+  const sellerConnectionForm = document.querySelector('#seller-connection-form');
+  const sellerIpInput = document.querySelector('#seller-server-ip');
+  const sellerConnectionError = document.querySelector('#seller-connection-error');
+  const savedSellerIp = localStorage.getItem('sellerServerIp');
+  if (savedSellerIp) sellerIpInput.value = savedSellerIp;
+  sellerConnectionForm.onsubmit = async event => {
+    event.preventDefault();
+    sellerConnectionError.textContent = 'در حال بررسی اتصال...';
+    try {
+      const response = await api('/api/connection', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({host: sellerIpInput.value.trim()})
+      });
+      localStorage.setItem('sellerServerIp', response.host);
+      sellerConnectionModal.classList.add('hidden');
+      go('sales');
+      await load();
+    } catch (error) {
+      sellerConnectionError.textContent = error.message;
+    }
+  };
+  // همگام‌سازی خودکار نسخه فروشنده با سیستم مرکزی.
   setInterval(() => {
+    if (!sellerConnectionModal.classList.contains('hidden')) return;
     load().catch(() => {});
   }, 5000);
 </script>
